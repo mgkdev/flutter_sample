@@ -1,0 +1,81 @@
+name: Flutter Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_name:
+        description: "Target Name"
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  check:
+    name: "Check"
+
+    runs-on: ubuntu-latest
+
+    # defaults:
+    #   run:
+    #     working-directory: ${{ github.workspace }}/target
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # - name: After Checkout (prepare)
+      #   run: |
+      #     mkdir -p ${{ github.workspace }}/target
+      #   shell: bash
+      #   working-directory: ${{ github.workspace }}
+
+      # - name: After Checkout (main)
+      #   run: |
+      #     pwd
+      #     ls -al
+      #     tree -a -I .git
+      #     printenv
+      #   shell: bash
+
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.target_name }}
+          path: ${{ github.workspace }}/target
+
+      - name: After Checkout (target)
+        run: |
+          pwd
+          ls -al
+          tree -a -I .git
+          printenv
+        shell: bash
+
+      # - uses: kuhnroyal/flutter-fvm-config-action/setup@v3
+      #   with:
+      #     path: ./target/.fvmrc
+
+      # - name: Version
+      #   run: |
+      #     flutter --version
+      #     dart --version
+      #     ls -al
+      #     tree
+      #   shell: bash
+
+      - uses: ./.github/actions/setup
+        with:
+          path: ${{ github.workspace }}/target
+
+      - name: Version
+        run: |
+          flutter --version
+          dart --version
+          ls -al
+          tree -a -I .git
+          printenv
+        shell: bash
+
+      - uses: ./.github/actions/check
+        with:
+          path: ${{ github.workspace }}/target
