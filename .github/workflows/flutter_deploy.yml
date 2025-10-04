@@ -24,6 +24,14 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: After Checkout
+        run: |
+          pwd
+          ls -al
+          tree -a -I .git
+          printenv
+        shell: bash
+
       # - name: After Checkout (prepare)
       #   run: |
       #     mkdir -p ${{ github.workspace }}/target
